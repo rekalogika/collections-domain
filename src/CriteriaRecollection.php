@@ -19,8 +19,11 @@ use Doctrine\Common\Collections\Order;
 use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\Common\Collections\Selectable;
 use Rekalogika\Contracts\Rekapager\PageableInterface;
+use Rekalogika\Domain\Collections\Common\CountStrategy;
+use Rekalogika\Domain\Collections\Common\Trait\ItemsWithSafeguardTrait;
+use Rekalogika\Domain\Collections\Common\Trait\PageableTrait;
 use Rekalogika\Domain\Collections\Exception\UnexpectedValueException;
-use Rekalogika\Domain\Collections\Trait\ReadableCollectionTrait;
+use Rekalogika\Domain\Collections\Trait\ReadableExtraLazyTrait;
 use Rekalogika\Domain\Collections\Trait\RecollectionTrait;
 
 /**
@@ -34,8 +37,14 @@ class CriteriaRecollection implements PageableInterface, ReadableCollection
     /** @use RecollectionTrait<TKey,T> */
     use RecollectionTrait;
 
-    /** @use ReadableCollectionTrait<TKey,T> */
-    use ReadableCollectionTrait;
+    /** @use PageableTrait<TKey,T> */
+    use PageableTrait;
+
+    /** @use ItemsWithSafeguardTrait<TKey,T> */
+    use ItemsWithSafeguardTrait;
+
+    /** @use ReadableExtraLazyTrait<TKey,T> */
+    use ReadableExtraLazyTrait;
 
     /**
      * @var ReadableCollection<TKey,T>&Selectable<TKey,T>

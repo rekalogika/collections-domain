@@ -13,15 +13,42 @@ declare(strict_types=1);
 
 namespace Rekalogika\Domain\Collections\Trait;
 
+use Rekalogika\Domain\Collections\Common\Trait\ArrayAccessTrait;
+use Rekalogika\Domain\Collections\Common\Trait\CountableTrait;
+use Rekalogika\Domain\Collections\Common\Trait\IteratorAggregateTrait;
+use Rekalogika\Domain\Collections\Common\Trait\WritableCollectionTrait;
+
 /**
  * @template TKey of array-key
  * @template T
+ *
+ * @internal
  */
-trait ArrayAccessTrait
+trait ExtraLazyTrait
 {
     /**
-     * Safe
-     *
+     * @use WritableCollectionTrait<TKey,T>
+     * @use ReadableExtraLazyTrait<TKey,T>
+     */
+    use WritableCollectionTrait, ReadableExtraLazyTrait {
+        WritableCollectionTrait::filter insteadof ReadableExtraLazyTrait;
+        WritableCollectionTrait::map insteadof ReadableExtraLazyTrait;
+        WritableCollectionTrait::partition insteadof ReadableExtraLazyTrait;
+    }
+
+    use CountableTrait;
+
+    /** @use IteratorAggregateTrait<TKey,T> */
+    use IteratorAggregateTrait;
+
+    /** @use ArrayAccessTrait<TKey,T> */
+    use ArrayAccessTrait;
+
+    //
+    // ArrayAccess
+    //
+
+    /**
      * @param TKey $offset
      */
     final public function offsetExists(mixed $offset): bool
@@ -30,8 +57,6 @@ trait ArrayAccessTrait
     }
 
     /**
-     * Safe
-     *
      * @param TKey $offset
      */
     final public function offsetGet(mixed $offset): mixed
@@ -57,14 +82,17 @@ trait ArrayAccessTrait
         $this->collection->offsetSet($offset, $value);
     }
 
+    //
+    // Collection
+    //
+
     /**
-     * Unsafe
+     * Safe
      *
-     * @param TKey $offset
+     * @param T $element
      */
-    final public function offsetUnset(mixed $offset): void
+    final public function add(mixed $element): void
     {
-        $this->getItemsWithSafeguard();
-        $this->collection->offsetUnset($offset);
+        $this->collection->add($element);
     }
 }
